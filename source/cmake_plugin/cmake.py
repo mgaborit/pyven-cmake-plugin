@@ -20,6 +20,7 @@ class CMake(Process):
                                     begin_warning_patterns=[],\
                                     end_warning_patterns=[])
     
+    @Process.error_checks
     def process(self, verbose=False, warning_as_error=False):
         Logger.get().info('CMake : ' + self.type + ':' + self.name)
         self.duration, out, err, returncode = self._call_command(self._format_call())
@@ -41,10 +42,12 @@ class CMake(Process):
             self.status = pyven.constants.STATUS[0]
         return returncode == 0
     
-    def clean(self, verbose=False):
+    @Process.error_checks
+    def clean(self, verbose=False, warning_as_error=False):
         Logger.get().info('Cleaning : ' + self.type + ':' + self.name)
         if os.path.isdir(os.path.join(self.cwd, self.output_path)):
             shutil.rmtree(os.path.join(self.cwd, self.output_path))
+        self.status = pyven.constants.STATUS[0]
         return True
         
     def report_summary(self):
